@@ -1,5 +1,5 @@
 #Fetch the online profile of a person given an email
-from Django_FullContact.models import UserProfile, FullContactLogger
+from Django_FullContact.models import FullContactProfile, FullContactLogger
 from datetime import timedelta
 import datetime, requests, simplejson
 
@@ -28,9 +28,9 @@ class NetworkError(Exception):
 
 def getsocialprofile(email):
 	try:
-		user_result = UserProfile.objects.get(emailid=email)
+		user_result = FullContactProfile.objects.get(emailid=email)
 		return simplejson.loads(user_result.userdata)
-	except (UserProfile.DoesNotExist,ValueError):
+	except (FullContactProfile.DoesNotExist,ValueError):
 		today_minus_30_days = datetime.datetime.now() - timedelta(days=30)
 		num_requests_this_month = FullContactLogger.objects.filter(statuscode=200).filter(createts__gt=today_minus_30_days).count()
 		if (num_requests_this_month < max_limit_per_month):
@@ -48,7 +48,7 @@ def getsocialprofile(email):
 			FullContactLogger.objects.create(emailid=email,statuscode=data['status'])
 			#'store data only if status from full contact is 200'
 			if (data['status'] == 200):
-				UserProfile.objects.create(emailid=email,userdata=result.text)
+				FullContactProfile.objects.create(emailid=email,userdata=result.text)
 				return data
 			elif (data['status'] == 404):
 				raise ContactNotFound
