@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class UserProfile(models.Model):
+class FullContactProfile(models.Model):
 	emailid=models.EmailField(primary_key=True)
 	userdata=models.TextField()
 	modifyts=models.DateField(auto_now=True)
